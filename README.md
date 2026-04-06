@@ -120,6 +120,26 @@ Server runs on http://localhost:4000
 
 **✓ Now you're ready!** See next section for testing.
 
+## Setup Modes
+
+### Local (Node + external PostgreSQL)
+
+1. Configure `.env` with your database URL and secrets.
+2. Run `npm run prisma:generate`.
+3. Run `npm run prisma:migrate -- --name init`.
+4. Start the server with `npm run dev`.
+
+### Docker (single container)
+
+1. Build image: `docker build -t finance-dashboard:latest .`
+2. Run with env file: `docker run --rm -p 4000:4000 --env-file .env finance-dashboard:latest`
+
+### Docker Compose (app + database)
+
+1. Ensure `.env` is populated.
+2. Run: `docker compose up --build`
+3. The container startup script handles Prisma sync based on `PRISMA_DB_SYNC_STRATEGY`.
+
 ## Interactive API Documentation (Swagger UI)
 
 Once the server is running, access interactive API docs:
@@ -222,3 +242,29 @@ npm run prisma:migrate -- --name name_of_migration
 - Prisma protects against SQL injection by parameterized queries.
 - Tokens expire based on `JWT_EXPIRES_IN`.
 - Bootstrap seeding is safe-by-default and disabled unless `BOOTSTRAP_ADMIN="true"`.
+
+## Assumptions
+
+- Backend is API-first and consumed by a separate frontend.
+- JWT bearer authentication is sufficient for assignment scope.
+- Role model is fixed to `VIEWER`, `ANALYST`, `ADMIN`.
+- Currency is represented as decimal numbers in the database.
+- Soft-delete behavior is preferred over hard delete for transactions.
+- PostgreSQL is available in local, Docker, or managed-hosted mode.
+
+## Tradeoffs
+
+- Used stateless JWT auth instead of session storage for simpler deployment.
+- Used role-based guards (RBAC) instead of fine-grained policy engine to keep logic clear.
+- Used Prisma ORM for reliability and maintainability over raw SQL-heavy code.
+- Added `migrate-then-push` startup fallback to improve deployment resilience; this trades stricter migration history enforcement for uptime in constrained environments.
+- Prioritized clear service-layer structure and deterministic validations over adding advanced features like refresh tokens and full-text search.
+
+## Documentation Map
+
+- Architecture: `ARCHITECTURE.md`
+- Deployment and Docker: `documentation/DOCKER_DEPLOYMENT.md`
+- API endpoint examples: `API_REFERENCE.md`
+- Swagger usage: `SWAGGER_UI_GUIDE.md`
+- Error behavior and fallbacks: `ERROR_HANDLING.md`
+- Database setup and migrations: `DATABASE_SETUP.md`
