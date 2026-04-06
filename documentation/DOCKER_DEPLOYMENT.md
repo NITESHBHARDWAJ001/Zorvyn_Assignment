@@ -55,10 +55,16 @@ docker run --rm -p 4000:4000 \
 The container entrypoint runs these steps before the app starts:
 
 1. `prisma generate`
-2. `prisma migrate deploy`
+2. Prisma schema sync using `PRISMA_DB_SYNC_STRATEGY`
 3. `npm start`
 
-That means any pending migrations are applied automatically before the server begins accepting requests.
+Supported `PRISMA_DB_SYNC_STRATEGY` values:
+
+- `migrate`: run only `prisma migrate deploy`
+- `push`: run only `prisma db push --accept-data-loss`
+- `migrate-then-push`: try migrate first, fallback to push on failure (default)
+
+This allows deployment to recover automatically from migration history issues while still preferring migration-based updates.
 
 ## Verification
 
@@ -73,3 +79,4 @@ That means any pending migrations are applied automatically before the server be
 - Set `SWAGGER_SERVER_URLS` in `.env` to control which URLs appear in Swagger UI.
 - Set `DATABASE_URL` in `.env` for both local Docker and production deployments.
 - Keep `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` in `.env` so Docker Compose can build the database connection string from environment values.
+- Set `PRISMA_DB_SYNC_STRATEGY` in `.env` to choose migration mode during startup.
