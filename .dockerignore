@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.env.*
+coverage
+tests
+README.md
+ARCHITECTURE.md
+DEPLOYMENT.md
+SWAGGER_UI_GUIDE.md
+API_REFERENCE.md
+DATABASE_SETUP.md
+ERROR_HANDLING.md
+BOOTSTRAP_ENDPOINT_GUIDE.md
